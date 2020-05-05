@@ -47,25 +47,25 @@ contract BiddingContract {
     }
     
     function getCurrentProductBid(uint id) public view returns (uint) {
-        require(productBids[id].productId > 0, "No bid for this product yet!");
+        require(productBids[id].highestBid > 0, "No bid for this product yet!");
         return productBids[id].highestBid;
     }
 
     function bid(uint id) public payable {
-        require(products[id].productId > 0, "No product with the given id!");
+        require(products[id].id > 0, "No product with the given id!");
 
-        Product product = products[id];
+        Product memory product = products[id];
         require(now <= product.expiry,"Auction already ended.");
 
-        ProductBid productBid = productBids[id];
+        ProductBid storage productBid = productBids[id];
         uint prevBid = productBid.bids[msg.sender];
         uint currentBid = prevBid + msg.value;
-        require(currentBid >= product.minPrice, "Your bid id lower then the minimal price!");
-        require(currentBid > productBid.highestBid, "There already is a higher bid.");
+        require(currentBid >= product.minPrice, "Your bid is lower then the minimal price!");
+        require(currentBid > productBid.highestBid, "There already is a higher or equal bid.");
         
         productBid.bids[msg.sender] = currentBid;
         if(prevBid == 0) {
-            bidders[id] = msg.sender;
+            bidders[id].push(msg.sender);
         }
         productBid.highestBidder = msg.sender;
         productBid.highestBid = currentBid;
