@@ -1,7 +1,7 @@
 pragma solidity >=0.5.0;
 
 contract AuctionContract {
-    address payable operator;
+    address payable public operator;
     struct Product {
         uint id;
         string name;
@@ -89,12 +89,25 @@ contract AuctionContract {
         ProductBid storage productBid = productBids[id];
         address winner = productBid.highestBidder;
         uint winnerBid = productBid.highestBid;
+        address payable productOwner = product.owner;
+        
+        // DELETE PRODUCT TO AVOID RE-ENTRANCY!!!
+        delete products[id];
+        uint productIndex = 0;
+        while (productIndex < productIds.length) {
+            if (productIds[productIndex] == id) {
+                break;
+            }
+            productIndex++;
+        }
+        delete productIds[productIndex];
+
         if (winner != address(0x0)) {
             emit AuctionEnded(winner, winnerBid, id);
             
             uint tax = (winnerBid * taxPercent) / 100;
             operator.transfer(tax);
-            product.owner.transfer(winnerBid - tax);
+            productOwner.transfer(winnerBid - tax);
 
             address payable[] storage productBidders = bidders[id];
             for (uint i = 0; i < productBidders.length; ++i) {
@@ -105,7 +118,6 @@ contract AuctionContract {
             }
             delete productBids[id];
         }
-        delete products[id];
         return winner;
     }
 }
