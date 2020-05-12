@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity >=0.5.0;
 
 contract AuctionContract {
     address payable operator;
@@ -26,24 +26,27 @@ contract AuctionContract {
     
     uint productId = 1;
 
-    uint public taxPercent = 2;
+    uint public taxPercent;
+
+    constructor(uint taxP) public {
+        require(taxP <= 99 && taxP >= 0, "The tax percent should be between 0 and 99!");
+        operator = msg.sender;
+        taxPercent = taxP;
+    }
 
     modifier onlyOperator {
         require(msg.sender == operator, "Only the operator of this contract can do this operaration!");
         _;
     }
 
-    function setTaxPercent(uint newTaxPercent) public onlyOperator {
+    // setting taxPercent - optional
+    /*function setTaxPercent(uint newTaxPercent) public onlyOperator {
         require(newTaxPercent < 100, "The tax must be lower than 100%!");
         taxPercent = newTaxPercent;
-    }
+    }*/
     
     //event HighestBidIncreased(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount, uint productId);
-
-    constructor() public {
-        operator = msg.sender;
-    }
 
     function addProduct(string memory name, uint biddingTime, uint minPrice) public {
         require((minPrice * taxPercent) / 100 > 0, "The product should cost more.");
@@ -104,6 +107,5 @@ contract AuctionContract {
         }
         delete products[id];
         return winner;
-        // require(productBid.highestBidder != address(0x0), "There was no bid for this auction!");
     }
 }
