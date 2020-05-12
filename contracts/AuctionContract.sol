@@ -49,7 +49,8 @@ contract AuctionContract {
     event AuctionEnded(address winner, uint amount, uint productId);
 
     function addProduct(string memory name, uint biddingTime, uint minPrice) public {
-        require((minPrice * taxPercent) / 100 > 0, "The product should cost more.");
+        require(biddingTime > 0, "The bid should last longer than 0 seconds!");
+        require((minPrice * taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now + biddingTime, minPrice);
         productId++;
