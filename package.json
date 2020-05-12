@@ -1,0 +1,23 @@
+{
+  "name": "blockchain_bidding_with_escrow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matusekma/blockchain_bidding_with_escrow.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matusekma/blockchain_bidding_with_escrow/issues"
+  },
+  "homepage": "https://github.com/matusekma/blockchain_bidding_with_escrow#readme"
+}
