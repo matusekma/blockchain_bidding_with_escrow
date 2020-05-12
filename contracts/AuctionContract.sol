@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-contract BiddingContract {
+contract AuctionContract {
     address payable operator;
     struct Product {
         uint id;
