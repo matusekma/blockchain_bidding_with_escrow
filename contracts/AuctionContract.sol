@@ -1,6 +1,9 @@
 pragma solidity >=0.5.0;
 
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+
 contract AuctionContract {
+    using SafeMath for uint256;
     address payable public operator;
     struct Product {
         uint id;
@@ -50,10 +53,10 @@ contract AuctionContract {
 
     function addProduct(string memory name, uint biddingTime, uint minPrice) public {
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
-        require((minPrice * taxPercent) / 100 > 0, "The product should cost more!");
+        require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
-        products[productId] = Product(productId, name, msg.sender, now + biddingTime, minPrice);
-        productId++;
+        products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);
+        productId.add(1);
     }
     
     function getCurrentProductBid(uint id) public view returns (uint) {
@@ -69,7 +72,7 @@ contract AuctionContract {
 
         ProductBid storage productBid = productBids[id];
         uint prevBid = productBid.bids[msg.sender];
-        uint currentBid = prevBid + msg.value;
+        uint currentBid = prevBid.add(msg.value);
         require(currentBid >= product.minPrice, "Your bid is lower than the minimal price!");
         require(currentBid > productBid.highestBid, "There already is a higher or equal bid.");
         
@@ -91,7 +94,7 @@ contract AuctionContract {
         address winner = productBid.highestBidder;
         uint winnerBid = productBid.highestBid;
         address payable productOwner = product.owner;
-        
+
         // DELETE PRODUCT TO AVOID RE-ENTRANCY!!!
         delete products[id];
         uint productIndex = 0;
@@ -106,9 +109,9 @@ contract AuctionContract {
         if (winner != address(0x0)) {
             emit AuctionEnded(winner, winnerBid, id);
             
-            uint tax = (winnerBid * taxPercent) / 100;
+            uint tax = winnerBid.mul(taxPercent) / 100;
             operator.transfer(tax);
-            productOwner.transfer(winnerBid - tax);
+            productOwner.transfer(winnerBid.sub(tax));
 
             address payable[] storage productBidders = bidders[id];
             for (uint i = 0; i < productBidders.length; ++i) {
