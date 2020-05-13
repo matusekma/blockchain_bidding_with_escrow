@@ -53,6 +53,7 @@ contract AuctionContract {
 
     function addProduct(string memory name, uint biddingTime, uint minPrice) public {
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
+        require(minPrice > 0, "Minimal price should be positive!");
         require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);

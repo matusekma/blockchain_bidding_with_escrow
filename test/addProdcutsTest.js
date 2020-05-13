@@ -63,4 +63,24 @@ contract('AuctionContract - testing adding products', function (accounts) {
         assert.equal(product1.minPrice.toNumber(), 100);
         assert.equal(product2.minPrice.toNumber(), 200);
     });
+
+    it("Should fail to add product because of negative expiry", async () => {
+        // add product
+        try {
+            await instance.addProduct("testProduct", -60, 100);
+        } catch (err) {
+            assert.equal(err.reason, "SafeMath: addition overflow")
+        }
+    });
+
+    //TODO handle negative values properly
+    /*
+    it("Should fail to add product because of negative minimal price", async () => {
+        // add product
+        try {
+            await instance.addProduct("testProduct", 60, -100);
+        } catch (err) {
+            assert.equal(err.reason, "SafeMath: addition overflow")
+        }
+    });*/
 });
