@@ -56,7 +56,7 @@ contract AuctionContract {
         require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);
-        productId.add(1);
+        productId = productId.add(1);
     }
     
     function getCurrentProductBid(uint id) public view returns (uint) {
