@@ -41,7 +41,7 @@ contract('AuctionContract - testing adding products', function (accounts) {
 
     it("Should fail because of expired auction", async () => {
         // add product
-        await instance.addProduct("testProduct", 1, 100, { from: accounts[0] });
+        await instance.addProduct("testProduct", 1, web3.utils.toWei('100', 'ether'), { from: accounts[0] });
 
         // attempt bid
         function timeout(ms) {
@@ -61,9 +61,10 @@ contract('AuctionContract - testing adding products', function (accounts) {
     it("Should fail because of bid smaller than minPrice", async () => {
         // add product
         await instance.addProduct("testProduct", 600, web3.utils.toWei('100', 'ether'), { from: accounts[0] });
+        const ID = 1;
 
         try {
-            await instance.bid(1, { from: accounts[1], value: web3.utils.toWei('10', 'ether') });
+            await instance.bid(ID, { from: accounts[1], value: web3.utils.toWei('10', 'ether') });
             assert.equal(0, 1, "The code should not reach this line.");
         } catch (err) {
             assert.equal(err.reason, "Your bid is lower than the minimal price!");
@@ -153,7 +154,7 @@ contract('AuctionContract - testing adding products', function (accounts) {
             await instance.bid(ID, { from: accounts[1], value: web3.utils.toWei('1000', 'ether') });
             assert.equal(0, 1, "The code should not reach this line.");
         } catch (err) {
-
+            // error is caught here
         }
     });
 });
