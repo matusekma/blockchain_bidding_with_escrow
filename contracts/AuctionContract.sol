@@ -24,8 +24,9 @@ contract AuctionContract {
     uint[] public productIds;
     
     // bids by product id
-    mapping(uint => ProductBid) productBids;
-    mapping(uint => address payable[]) bidders;
+    // TODO - remove public in production
+    mapping(uint => ProductBid) public productBids;
+    mapping(uint => address payable[]) public bidders;
     
     uint productId = 1;
 
@@ -63,6 +64,10 @@ contract AuctionContract {
     function getCurrentProductBid(uint id) public view returns (uint) {
         require(productBids[id].highestBidder != address(0x0), "No bid for this product yet!");
         return productBids[id].highestBid;
+    }
+
+    function getMyBid(uint id) public view returns (uint) {
+        return productBids[id].bids[msg.sender];
     }
 
     function bid(uint id) public payable {
@@ -106,6 +111,7 @@ contract AuctionContract {
             productIndex++;
         }
         delete productIds[productIndex];
+        //
 
         if (winner != address(0x0)) {
             emit AuctionEnded(winner, winnerBid, id);
