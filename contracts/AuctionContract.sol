@@ -22,12 +22,12 @@ contract AuctionContract {
     // products by id
     mapping(uint => Product) public products;
     uint[] public productIds;
-    
+
     // bids by product id
     // TODO - remove public in production
     mapping(uint => ProductBid) public productBids;
     mapping(uint => address payable[]) public bidders;
-    
+
     uint productId = 1;
 
     uint public taxPercent;
@@ -48,17 +48,19 @@ contract AuctionContract {
         require(newTaxPercent < 100, "The tax must be lower than 100%!");
         taxPercent = newTaxPercent;
     }*/
-    
+
     event AuctionEnded(address winner, uint amount, uint productId);
 
-    function addProduct(string memory name, uint biddingTime, uint minPrice) public {
+    function addProduct(string memory name, uint biddingTime, uint minPrice) public returns (uint){
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
         require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);
+        uint id = productId;
         productId = productId.add(1);
+        return id;
     }
-    
+
     function getCurrentProductBid(uint id) public view returns (uint) {
         require(productBids[id].highestBidder != address(0x0), "No bid for this product yet!");
         return productBids[id].highestBid;
@@ -79,7 +81,7 @@ contract AuctionContract {
         uint currentBid = prevBid.add(msg.value);
         require(currentBid >= product.minPrice, "Your bid is lower than the minimal price!");
         require(currentBid > productBid.highestBid, "There already is a higher or equal bid.");
-        
+
         productBid.bids[msg.sender] = currentBid;
         if(prevBid == 0) {
             bidders[id].push(msg.sender);
@@ -113,7 +115,7 @@ contract AuctionContract {
 
         if (winner != address(0x0)) {
             emit AuctionEnded(winner, winnerBid, id);
-            
+
             uint tax = winnerBid.mul(taxPercent) / 100;
             operator.transfer(tax);
             productOwner.transfer(winnerBid.sub(tax));
