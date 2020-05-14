@@ -6,19 +6,6 @@
     productId.add(1);
 }*/
 
-/*
-Termék hozzáadása: - Marci
-1 product hozzáadása
-2 -||- - legyen jó a productid és 2 product legyen a products mappingben
-productIds tömbbe kerüljön be az id
-productId változó növekedjen
-Tesztesetek:
-minPrice jó
-minPrice túl kicsi
-Jó biddingtime
-Rossz biddingtime (nem pozitív)
-*/
-
 var AuctionContract = artifacts.require("AuctionContract");
 
 contract('AuctionContract - testing adding products', function (accounts) {
@@ -74,7 +61,17 @@ contract('AuctionContract - testing adding products', function (accounts) {
             await instance.addProduct("testProduct", 0, 100);
             assert.equal(0, 1, "The code should not reach this line.");
         } catch (err) {
-            assert.equal(err.reason, "The bid should last longer than 0 seconds!")
+            assert.equal(err.reason, "The bid should last longer than 0 seconds!");
+        }
+    });
+
+    it("Should fail to add product because of tax not reaching 1 wei", async () => {
+        // add product
+        try {
+            await instance.addProduct("testProduct", 60, 1);
+            assert.equal(0, 1, "The code should not reach this line.");
+        } catch (err) {
+            assert.equal(err.reason, "The product should cost more!");
         }
     });
 });
