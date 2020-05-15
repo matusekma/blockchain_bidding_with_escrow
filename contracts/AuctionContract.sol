@@ -51,7 +51,7 @@ contract AuctionContract {
 
     event AuctionEnded(address winner, uint amount, uint productId);
 
-    function addProduct(string memory name, uint biddingTime, uint minPrice) external returns (uint){
+    function addProduct(string calldata name, uint biddingTime, uint minPrice) external returns (uint){
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
         require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
