@@ -51,7 +51,7 @@ contract AuctionContract {
 
     event AuctionEnded(address winner, uint amount, uint productId);
 
-    function addProduct(string memory name, uint biddingTime, uint minPrice) public returns (uint){
+    function addProduct(string memory name, uint biddingTime, uint minPrice) external returns (uint){
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
         require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
@@ -61,16 +61,16 @@ contract AuctionContract {
         return id;
     }
 
-    function getCurrentProductBid(uint id) public view returns (uint) {
+    function getCurrentProductBid(uint id) external view returns (uint) {
         require(productBids[id].highestBidder != address(0x0), "No bid for this product yet!");
         return productBids[id].highestBid;
     }
 
-    function getMyBid(uint id) public view returns (uint) {
+    function getMyBid(uint id) external view returns (uint) {
         return productBids[id].bids[msg.sender];
     }
 
-    function bid(uint id) public payable {
+    function bid(uint id) external payable {
         require(products[id].id > 0, "No product with the given id!");
 
         Product memory product = products[id];
@@ -91,7 +91,7 @@ contract AuctionContract {
     }
 
     //Lejárt licit kezelése - győztes elmentése termékkel együtt, termék kitörlése a hirdetésekből, pénz visszaadása, eladónak átutalás (- közvetítői díj magunknak)
-    function auctionEnd(uint id) public returns (address) {
+    function auctionEnd(uint id) external returns (address) {
         require(products[id].id > 0, "No product with the given id!");
         Product memory product = products[id];
         require(now >= product.expiry,"Auction not yet ended.");
