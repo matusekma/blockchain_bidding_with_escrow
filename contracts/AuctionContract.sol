@@ -33,7 +33,7 @@ contract AuctionContract {
     uint public taxPercent;
 
     constructor(uint taxP) public {
-        require(taxP <= 99 && taxP >= 0, "The tax percent should be between 0 and 99!");
+        require(taxP <= 99, "The tax percent should be between 0 and 99!");
         operator = msg.sender;
         taxPercent = taxP;
     }
