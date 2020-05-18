@@ -28,6 +28,8 @@ contract AuctionContract {
     mapping(uint => ProductBid) public productBids;
     mapping(uint => address payable[]) public bidders;
 
+    mapping(address => uint) private failedPaybacks;
+
     uint productId = 1;
 
     uint public taxPercent;
@@ -124,11 +126,21 @@ contract AuctionContract {
             for (uint i = 0; i < productBidders.length; ++i) {
                 address payable bidder = productBidders[i];
                 if (bidder != winner) {
-                    bidder.transfer(productBid.bids[bidder]);
+                    uint payback = productBid.bids[bidder];
+                    if(!bidder.send(payback)) {
+                        failedPaybacks[bidder] = failedPaybacks[bidder].add(payback);
+                    }
                 }
             }
             delete productBids[id];
         }
         return winner;
+    }
+
+    function getFailedPayback() external {
+        require(failedPaybacks[msg.sender] > 0, "You don't have any unpaid bids!");
+        uint payback = failedPaybacks[msg.sender];
+        failedPaybacks[msg.sender] = 0;
+        msg.sender.transfer(payback);
     }
 }
