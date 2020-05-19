@@ -21,7 +21,7 @@ function bid(uint id) public payable {
         productBid.highestBid = currentBid;
     }
 */
-contract('AuctionContract - testing adding products', function (accounts) {
+contract('AuctionContract - testing bidding', function (accounts) {
 
     let instance;
 
