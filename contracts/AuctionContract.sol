@@ -1,6 +1,7 @@
 pragma solidity >=0.6.0;
 
-import "/Users/Varga/node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+//import "/Users/Varga/node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "../node_modules/@openzeppelin/contracts/math/SafeMath.sol";
 
 contract AuctionContract {
     using SafeMath for uint256;
