@@ -65,7 +65,7 @@ contract('AuctionContract - testing adding products', function (accounts) {
         }
     });
 
-    it("Should fail to add product because of tax not reaching 1 wei", async () => {
+    /*it("Should fail to add product because of tax not reaching 1 wei", async () => {
         // add product
         try {
             await instance.addProduct("testProduct", 60, 1);
@@ -73,5 +73,5 @@ contract('AuctionContract - testing adding products', function (accounts) {
         } catch (err) {
             assert.equal(err.reason, "The product should cost more!");
         }
-    });
+    });*/
 });

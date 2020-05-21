@@ -55,7 +55,6 @@ contract AuctionContract {
 
     function addProduct(string calldata name, uint biddingTime, uint minPrice) external returns (uint){
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
-        require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);
         uint id = productId;
@@ -64,7 +63,7 @@ contract AuctionContract {
     }
 
     function getCurrentProductBid(uint id) external view returns (uint) {
-        require(productBids[id].highestBidder != address(0x0), "No bid for this product yet!");
+        require(productBids[id].highestBidder != address(0x0), "No bid for this product yet or no product with the given id!");
         return productBids[id].highestBid;
     }
 
@@ -97,7 +96,6 @@ contract AuctionContract {
         require(products[id].id > 0, "No product with the given id!");
         Product memory product = products[id];
         require(now >= product.expiry,"Auction not yet ended.");
-        // require(msg.sender == product.owner, "Only the owner of the product can end the action!");
         ProductBid storage productBid = productBids[id];
         address winner = productBid.highestBidder;
         uint winnerBid = productBid.highestBid;
@@ -131,6 +129,8 @@ contract AuctionContract {
                         failedPaybacks[bidder] = failedPaybacks[bidder].add(payback);
                     }
                 }
+                delete productBids[id].bids[bidder];
+                delete bidders[id][i];
             }
             delete productBids[id];
         }
