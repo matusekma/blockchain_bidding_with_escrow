@@ -1,6 +1,5 @@
 pragma solidity >=0.6.0;
 
-//import "/Users/Varga/node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/math/SafeMath.sol";
 
 contract AuctionContract {
@@ -56,7 +55,6 @@ contract AuctionContract {
 
     function addProduct(string calldata name, uint biddingTime, uint minPrice) external returns (uint){
         require(biddingTime > 0, "The bid should last longer than 0 seconds!");
-        //require(minPrice.mul(taxPercent) / 100 > 0, "The product should cost more!");
         productIds.push(productId);
         products[productId] = Product(productId, name, msg.sender, now.add(biddingTime), minPrice);
         uint id = productId;
@@ -98,7 +96,6 @@ contract AuctionContract {
         require(products[id].id > 0, "No product with the given id!");
         Product memory product = products[id];
         require(now >= product.expiry,"Auction not yet ended.");
-        // require(msg.sender == product.owner, "Only the owner of the product can end the action!");
         ProductBid storage productBid = productBids[id];
         address winner = productBid.highestBidder;
         uint winnerBid = productBid.highestBid;
@@ -137,7 +134,7 @@ contract AuctionContract {
             }
             delete productBids[id];
         }
-        //return winner;
+        return winner;
     }
 
     function getFailedPayback() external {
