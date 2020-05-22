@@ -1,26 +1,5 @@
 var AuctionContract = artifacts.require("AuctionContract");
 
-/*
-function bid(uint id) public payable {
-        require(products[id].id > 0, "No product with the given id!");
-
-        Product memory product = products[id];
-        require(now <= product.expiry,"Auction already ended.");
-
-        ProductBid storage productBid = productBids[id];
-        uint prevBid = productBid.bids[msg.sender];
-        uint currentBid = prevBid.add(msg.value);
-        require(currentBid >= product.minPrice, "Your bid is lower than the minimal price!");
-        require(currentBid > productBid.highestBid, "There already is a higher or equal bid.");
-        
-        productBid.bids[msg.sender] = currentBid;
-        if(prevBid == 0) {
-            bidders[id].push(msg.sender);
-        }
-        productBid.highestBidder = msg.sender;
-        productBid.highestBid = currentBid;
-    }
-*/
 contract('AuctionContract - testing bidding', function (accounts) {
 
     let instance;
